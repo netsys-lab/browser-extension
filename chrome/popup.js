@@ -54,7 +54,7 @@ window.onload = function () {
         proxyScheme: DEFAULT_PROXY_SCHEME,
         proxyHost: DEFAULT_PROXY_HOST,
         proxyPort: DEFAULT_PROXY_PORT
-      }, (items) => {
+    }, (items) => {
         let proxyScheme = items.proxyScheme;
         let proxyHost = items.proxyHost;
         let proxyPort = items.proxyPort;
@@ -63,7 +63,7 @@ window.onload = function () {
         updatePathUsage();
         checkProxyStatus();
     });
-    
+
 }
 
 const updatePathUsage = () => {
@@ -96,13 +96,13 @@ const updatePathUsage = () => {
 function checkProxyStatus() {
     proxyStatusMessage.textContent = "Checking proxy status...";
     proxyHelpLink.classList.add('hidden');
-    
+
     fetch(`${proxyAddress}${proxyHealthCheckPath}`, {
         method: "GET",
         signal: AbortSignal.timeout(2000)
     }).then(response => {
         if (response.status === 200) {
-            
+
             if (proxyAddress.startsWith('https://')) {
                 proxyStatusMessage.textContent = "Connected to proxy via HTTPS";
                 proxyStatusMessage.innerHTML += " <span>&#x2705;</span> ";
@@ -113,7 +113,7 @@ function checkProxyStatus() {
                 showProxyHelpLink();
             }
             const proxyDetailsContent = document.getElementById('proxy-details-content');
-            proxyDetailsContent.textContent = `Proxy at ${proxyAddress}`;            
+            proxyDetailsContent.textContent = `Proxy at ${proxyAddress}`;
         } else {
             // Show error message for non-200 responses
             console.warn("Proxy check failed:", response.status);
@@ -138,8 +138,8 @@ function checkProxyStatus() {
 function showProxyHelpLink() {
     proxyHelpLink.classList.remove('hidden');
     proxyHelpLink.href = chrome.runtime.getURL('proxy-help.html');
-    
-    proxyHelpLink.addEventListener('click', function(event) {
+
+    proxyHelpLink.addEventListener('click', function (event) {
         event.preventDefault();
         chrome.tabs.create({ url: this.href });
     });
@@ -316,10 +316,14 @@ async function loadRequestInfo() {
                 let p = document.createElement("p");
                 p.style.fontSize = "14px"
                 if (r.scionEnabled) {
-                    p.innerHTML = "<span>&#x2705;</span> " + r.domain;
+                    if (r.recordVerified) {
+                        p.innerHTML = r.domain + " - SCION: <span>&#x2705;</span> " + " RHINE: <span>&#x2705;</span>";
+                    } else {
+                        p.innerHTML = r.domain + " - SCION: <span>&#x2705;</span> " + " RHINE: <span>&#x274C;</span>";
+                    }
                 } else {
                     mixedContent = true;
-                    p.innerHTML = "<span>&#x274C;</span> " + r.domain;
+                    p.innerHTML = r.domain + " - SCION: <span>&#x274C;</span> ";
                 }
 
                 domainList.appendChild(p);

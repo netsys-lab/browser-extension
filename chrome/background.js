@@ -474,9 +474,11 @@ function onBeforeRequest(requestInfo) {
                 method: "GET"
             }).then(response => {
                 if (response.status === 200) {
-                    response.text().then(res => {
-                        if (res != "") {
+                    response.json().then(res => {
+                        if (res) {
+                            console.log(res);
                             requestDBEntry.scionEnabled = true;
+                            requestDBEntry.recordVerified = res.recordVerified;
                             console.log("<DB> scion enabled (after resolve): ", url.hostname);
                             console.warn("THIS IS A TEST LOG")
                         } else {
