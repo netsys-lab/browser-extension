@@ -494,7 +494,7 @@ function onBeforeRequest(requestInfo) {
                             } else {
                                 knownNonSCION[url.hostname] = true;
                             }
-
+                            console.warn("<DB> added requestDBEntry: ", requestDBEntry);
                             refreshIconByUrlAndTabId(url, requestInfo.tabId);
                         });
                     });
@@ -506,9 +506,10 @@ function onBeforeRequest(requestInfo) {
                 console.error(e);
             });
         } else {
-            requestDBEntry.scionEnabled = !!knownSCION[url.hostname];
+            // NOT Add another entry here, we fixed the adding logic above
+            // requestDBEntry.scionEnabled = !!knownSCION[url.hostname];
             console.log("<DB> scion enabled/disabled: ", requestDBEntry.scionEnabled, url.hostname)
-            databaseAdapter.add(requestDBEntry);
+            // databaseAdapter.add(requestDBEntry);
 
         }
     });
